@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var errorMask = 1 << 31
+var errorMask uint32 = 1 << 31
 
 // TODO: Finish error code names
 var ErrorNames = map[uint32]string{

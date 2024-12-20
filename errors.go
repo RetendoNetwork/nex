@@ -9,15 +9,15 @@ type Errors struct {
 
 func (s Errors) Error() string {
 	rcode := s.RCode
-	if int(rcode)&errorMask != 0 {
-		rcode = rcode & ^uint32(errorMask)
+	if rcode&errorMask != 0 {
+		rcode = rcode & ^errorMask
 	}
 	return fmt.Sprintf("[%s] %s", ErrorNameFromCode(rcode), s.Message)
 }
 
 func NewError(rcode uint32, message string) *Errors {
-	if int(rcode)&errorMask == 0 {
-		rcode = uint32(int(rcode) | errorMask)
+	if rcode&errorMask == 0 {
+		rcode = rcode | errorMask
 	}
 
 	return &Errors{
