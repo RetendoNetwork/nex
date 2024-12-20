@@ -5,6 +5,11 @@
 - It's NEX Library written in Go for Retendo Network.
 - Nintendo used the Library Quazal Rendez-Vous by Ubisoft and Quazal Companie and added some modifications for create "NEX". NEX is library for Online Games Servers for Nintendo 2DS/3DS, Nintendo Wii U and Nintendo Switch Consoles. (But today Nintendo Switch used NPLN).
 
+## Installation 
+```
+go get github.com/RetendoNetwork/nex
+```
+
 ## Example Usage
 ```Go
 package main
@@ -16,7 +21,7 @@ import (
 func main() {
 	server := nex.NewServer()
 	
-	server.SetPrudpVersion(1)
+	server.SetPRUDPVersion(1)
 	server.SetKeySize(16)
 	server.SetFragmentSize(962)
 	server.SetAccessKey("ridfebb9")

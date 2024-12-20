@@ -51,11 +51,11 @@ func (srv *Server) SetSocket(socket *net.UDPConn) {
 	srv.socket = socket
 }
 
-func (srv *Server) GetPrudpVersion() int {
+func (srv *Server) GetPRUDPVersion() int {
 	return srv.prudpVersion
 }
 
-func (srv *Server) SetPrudpVersion(prudpVersion int) {
+func (srv *Server) SetPRUDPVersion(prudpVersion int) {
 	srv.prudpVersion = prudpVersion
 }
 
@@ -100,13 +100,13 @@ func (srv *Server) SetKeySize(KeySize int) {
 }
 
 func (srv *Server) OnData(event string, handler interface{}) {
-	switch handler.(type) {
+	switch h := handler.(type) {
 	case func(PacketInterface):
-		srv.genericEventHandles[event] = append(srv.genericEventHandles[event], handler.(func(PacketInterface)))
+		srv.genericEventHandles[event] = append(srv.genericEventHandles[event], h)
 	case func(*PacketV0):
-		srv.prudpV0EventHandles[event] = append(srv.prudpV0EventHandles[event], handler.(func(*PacketV0)))
+		srv.prudpV0EventHandles[event] = append(srv.prudpV0EventHandles[event], h)
 	case func(*PacketV1):
-		srv.prudpV1EventHandles[event] = append(srv.prudpV1EventHandles[event], handler.(func(*PacketV1)))
+		srv.prudpV1EventHandles[event] = append(srv.prudpV1EventHandles[event], h)
 	}
 }
 
