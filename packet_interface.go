@@ -1,4 +1,6 @@
 package nex
 
-type PacketInterface struct {
+type PacketInterface interface {
+	Payload() []byte
+	SetPayload(payload []byte)
 }
