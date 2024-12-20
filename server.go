@@ -1,6 +1,7 @@
 package nex
 
 import (
+	"fmt"
 	"net"
 	"strconv"
 )
@@ -111,12 +112,26 @@ func (server *Server) OnData(event string, handler interface{}) {
 	}
 }
 
+func (server *Server) SendRaw(conn *net.UDPAddr, data []byte) error {
+	if server == nil || server.GetSocket() == nil {
+		return fmt.Errorf("server or socket is nil")
+	}
+	_, err := server.GetSocket().WriteToUDP(data, conn)
+	if err != nil {
+		return fmt.Errorf("failed to send data: %w", err)
+	}
+	return nil
+}
+
 func NewServer() *Server {
 	server := &Server{
-		prudpVersion: 1,
-		keySize:      32,
-		fragmentSize: 1300,
-		signatureKey: 1,
+		genericEventHandles: make(map[string][]func(PacketInterface)),
+		prudpV0EventHandles: make(map[string][]func(*PacketV0)),
+		prudpV1EventHandles: make(map[string][]func(*PacketV1)),
+		prudpVersion:        1,
+		keySize:             32,
+		fragmentSize:        1300,
+		signatureKey:        1,
 	}
 
 	return server
