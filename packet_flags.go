@@ -1,7 +1,7 @@
 package nex
 
-var FlagAck = 0x1
-var FlagReliable = 0x2
-var FlagNeedsAck = 0x4
-var FlagHasSize = 0x8
+var FlagAck = 0x001
+var FlagReliable = 0x002
+var FlagNeedsAck = 0x004
+var FlagHasSize = 0x008
 var FlagMultiAck = 0x200

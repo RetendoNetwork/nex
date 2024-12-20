@@ -17,12 +17,14 @@ type Server struct {
 	genericEventHandles map[string][]func(PacketInterface)
 	prudpV0EventHandles map[string][]func(*PacketV0)
 	prudpV1EventHandles map[string][]func(*PacketV1)
+	connIncrementer     *Incrementer[int]
 }
 
 func (srv *Server) Listen(port int) {
 	srv.ListenUDP(port)
 }
 
+// ListenUDP starts the UDP server on the specified port
 func (srv *Server) ListenUDP(port int) {
 	protocol := "udp"
 
@@ -43,60 +45,79 @@ func (srv *Server) ListenUDP(port int) {
 	<-quit
 }
 
+// GetSocket returns the current UDP socket
 func (srv *Server) GetSocket() *net.UDPConn {
 	return srv.socket
 }
 
+// SetSocket sets the UDP socket
 func (srv *Server) SetSocket(socket *net.UDPConn) {
 	srv.socket = socket
 }
 
+// GetPRUDPVersion returns the PRUDP version
 func (srv *Server) GetPRUDPVersion() int {
 	return srv.prudpVersion
 }
 
+// SetPRUDPVersion sets the PRUDP version
 func (srv *Server) SetPRUDPVersion(prudpVersion int) {
 	srv.prudpVersion = prudpVersion
 }
 
+// GetNexVersion returns the Nex version
 func (srv *Server) GetNexVersion() int {
 	return srv.nexVersion
 }
 
+// SetNexVersion sets the Nex version
 func (srv *Server) SetNexVersion(nexVersion int) {
 	srv.nexVersion = nexVersion
 }
 
+// GetSignatureKey returns the signature key
 func (srv *Server) GetSignatureKey() int {
 	return srv.signatureKey
 }
 
+// SetSignatureKey sets the signature key
 func (srv *Server) SetSignatureKey(SignatureKey int) {
 	srv.signatureKey = SignatureKey
 }
 
+// GetFragmentSize returns the fragment size
 func (srv *Server) GetFragmentSize() int {
 	return srv.fragmentSize
 }
 
+// SetFragmentSize sets the fragment size
 func (srv *Server) SetFragmentSize(FragmentSize int) {
 	srv.fragmentSize = FragmentSize
 }
 
+// GetAccessKey returns the access key
 func (srv *Server) GetAccessKey() string {
 	return srv.accessKey
 }
 
+// SetAccessKey sets the access key
 func (srv *Server) SetAccessKey(accessKey string) {
 	srv.accessKey = accessKey
 }
 
+// GetKeySize returns the key size
 func (srv *Server) GetKeySize() int {
 	return srv.keySize
 }
 
+// SetKeySize sets the key size
 func (srv *Server) SetKeySize(KeySize int) {
 	srv.keySize = KeySize
+}
+
+// ConnIncrementer returns the connection incrementer
+func (srv *Server) ConnIncrementer() *Incrementer[int] {
+	return srv.connIncrementer
 }
 
 func (srv *Server) OnData(event string, handler interface{}) {
@@ -166,6 +187,7 @@ func NewServer() *Server {
 		keySize:             32,
 		fragmentSize:        1300,
 		signatureKey:        1,
+		connIncrementer:     NewIncrementer(10),
 	}
 
 	return srv

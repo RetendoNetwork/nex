@@ -1,9 +1,14 @@
 package nex
 
 type Packet struct {
-	request RMCRequest
+	request  RMCRequest
+	response RMCResponse
 }
 
-func (packet *Packet) RMCRequest() RMCRequest {
-	return packet.request
+func (pkt *Packet) RMCRequest() RMCRequest {
+	return pkt.request
+}
+
+func (pkt *Packet) RMCResponse() RMCResponse {
+	return pkt.response
 }

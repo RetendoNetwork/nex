@@ -4,6 +4,7 @@
 ## Informations
 - It's NEX Library written in Go for Retendo Network.
 - Nintendo used the Library Quazal Rendez-Vous by Ubisoft and Quazal Companie and added some modifications for create "NEX". NEX is library for Online Games Servers for Nintendo 2DS/3DS, Nintendo Wii U and Nintendo Switch Consoles. (But today Nintendo Switch used NPLN).
+- For create our NEX Library, we used the NEX documentation from NintendoClients, thanks Kinnay.
 
 ## Installation 
 ```
