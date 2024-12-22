@@ -1,8 +1,9 @@
 module github.com/RetendoNetwork/nex
 
-go 1.22.2
+go 1.23.4
 
 require (
+	github.com/RetendoNetwork/GoBuffer v0.0.0-20241221170554-27330b350ac7 // indirect
 	github.com/pion/dtls/v2 v2.2.12 // indirect
 	github.com/pion/logging v0.2.2 // indirect
 	github.com/pion/stun v0.6.1 // indirect

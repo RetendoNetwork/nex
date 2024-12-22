@@ -3,6 +3,7 @@ package nex
 type Packet struct {
 	request  RMCRequest
 	response RMCResponse
+	version  uint8
 }
 
 func (pkt *Packet) RMCRequest() RMCRequest {

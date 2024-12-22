@@ -16,16 +16,16 @@ go get github.com/RetendoNetwork/nex
 package main
 
 import (
-	"github.com/RetendoNetwork/nex"
+	"github.com/RetendoNetwork/nex" // Import NEX Library
 )
 
 func main() {
-	server := nex.NewServer()
+	server := nex.NewServer() // Create new server
 	
-	server.SetPRUDPVersion(1)
-	server.SetKeySize(16)
-	server.SetFragmentSize(962)
-	server.SetAccessKey("ridfebb9")
+	server.SetPRUDPVersion(1) // Set your PRUDP Version
+	server.SetKeySize(16) // Set your Key Size
+	server.SetFragmentSize(962) // Set your Fragment Size
+	server.SetAccessKey("ridfebb9") // Set your game server acess key
 
 	server.OnData("Data", func(packet *nex.PacketV0) {
 		request := packet.RMCRequest()
@@ -34,6 +34,6 @@ func main() {
 		fmt.Printf("Method: %#v\n", request.GetMethod())
 	})
 
-	server.Listen(6000)
+	server.Listen(6000) // Set your port
 }
 ```

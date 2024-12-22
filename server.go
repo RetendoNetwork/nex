@@ -7,17 +7,19 @@ import (
 )
 
 type Server struct {
-	socket              *net.UDPConn
-	accessKey           string
-	prudpVersion        int
-	nexVersion          int
-	keySize             int
-	fragmentSize        int
-	signatureKey        int
-	genericEventHandles map[string][]func(PacketInterface)
-	prudpV0EventHandles map[string][]func(*PacketV0)
-	prudpV1EventHandles map[string][]func(*PacketV1)
-	connIncrementer     *Incrementer[int]
+	socket                *net.UDPConn
+	accessKey             string
+	prudpVersion          int
+	nexVersion            *nexVersion
+	pid                   uint32
+	keySize               int
+	fragmentSize          int
+	signatureKey          int
+	genericEventHandles   map[string][]func(PacketInterface)
+	prudpV0EventHandles   map[string][]func(*PacketV0)
+	prudpV1EventHandles   map[string][]func(*PacketV1)
+	prudpLiteEventHandles map[string][]func(*PacketLite)
+	connIncrementer       *Incrementer[int]
 }
 
 func (srv *Server) Listen(port int) {
@@ -65,14 +67,24 @@ func (srv *Server) SetPRUDPVersion(prudpVersion int) {
 	srv.prudpVersion = prudpVersion
 }
 
-// GetNexVersion returns the Nex version
-func (srv *Server) GetNexVersion() int {
+// NEXVersion returns the server NEX version
+func (srv *Server) NEXVersion() *nexVersion {
 	return srv.nexVersion
 }
 
-// SetNexVersion sets the Nex version
-func (srv *Server) SetNexVersion(nexVersion int) {
-	srv.nexVersion = nexVersion
+// SetDefaultNEXVersion sets the default NEX protocol versions
+func (srv *Server) SetDefaultNEXVersion(n *nexVersion) {
+	srv.nexVersion = n
+}
+
+// PID returns the PID
+func (srv *Server) GetPID() uint32 {
+	return srv.pid
+}
+
+// SetPID sets the PID
+func (srv *Server) SetPID(pid uint32) {
+	srv.pid = pid
 }
 
 // GetSignatureKey returns the signature key
@@ -128,18 +140,14 @@ func (srv *Server) OnData(event string, handler interface{}) {
 		srv.prudpV0EventHandles[event] = append(srv.prudpV0EventHandles[event], h)
 	case func(*PacketV1):
 		srv.prudpV1EventHandles[event] = append(srv.prudpV1EventHandles[event], h)
+	case func(*PacketLite):
+		srv.prudpLiteEventHandles[event] = append(srv.prudpLiteEventHandles[event], h)
 	}
 }
 
-type ServerPacketInterface interface {
-	Payload() []byte
-	SetPayload(payload []byte)
-	getFragmentID() uint8
-	setFragmentID(fragmentID uint8)
-}
-
 func (srv *Server) Send(pkt PacketInterface) {
-	if srvPkt, valid := pkt.(ServerPacketInterface); valid {
+	switch srvPkt := pkt.(type) {
+	default:
 		payload := srvPkt.Payload()
 		chunkSize := srv.fragmentSize
 		totalChunks := len(payload) / chunkSize
@@ -164,7 +172,7 @@ func (srv *Server) Send(pkt PacketInterface) {
 }
 
 func (srv *Server) SendPacket(pkt PacketInterface) {
-	// TODO: Do SendPacket func.
+	// TODO: Add SendPacket.
 }
 
 func (srv *Server) SendRaw(conn *net.UDPAddr, data []byte) error {
@@ -180,15 +188,18 @@ func (srv *Server) SendRaw(conn *net.UDPAddr, data []byte) error {
 
 func NewServer() *Server {
 	srv := &Server{
-		genericEventHandles: make(map[string][]func(PacketInterface)),
-		prudpV0EventHandles: make(map[string][]func(*PacketV0)),
-		prudpV1EventHandles: make(map[string][]func(*PacketV1)),
-		prudpVersion:        1,
-		keySize:             32,
-		fragmentSize:        1300,
-		signatureKey:        1,
-		connIncrementer:     NewIncrementer(10),
+		genericEventHandles:   make(map[string][]func(PacketInterface)),
+		prudpV0EventHandles:   make(map[string][]func(*PacketV0)),
+		prudpV1EventHandles:   make(map[string][]func(*PacketV1)),
+		prudpLiteEventHandles: make(map[string][]func(*PacketLite)),
+		prudpVersion:          1,
+		keySize:               32,
+		fragmentSize:          1300,
+		signatureKey:          1,
+		connIncrementer:       NewIncrementer(10),
 	}
+
+	srv.SetDefaultNEXVersion(NewNexVersion(0, 0, 0)) // Set the default version of NEX.
 
 	return srv
 }

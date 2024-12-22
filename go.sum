@@ -1,3 +1,5 @@
+github.com/RetendoNetwork/GoBuffer v0.0.0-20241221170554-27330b350ac7 h1:ELwbTI3Zz+9NGGYcAK5gcr6pb+3xmmYUAjStZRZvQaE=
+github.com/RetendoNetwork/GoBuffer v0.0.0-20241221170554-27330b350ac7/go.mod h1:liWyagGswd/rlSLQuostFwvWzKwcwFZXg9lgB1n3tIU=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/pion/dtls/v2 v2.2.7 h1:cSUBsETxepsCSFSxC3mc/aDo14qQLMSL+O6IjG28yV8=

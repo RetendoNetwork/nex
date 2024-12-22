@@ -51,6 +51,22 @@ func NewEncryptionHandler(secret []byte) *EncryptionHandler {
 	return &EncryptionHandler{secretKey: secret}
 }
 
+type Ticket struct {
+	SessionKey []byte
+	Target     int
+	Internal   int
+}
+
+func (t *Ticket) EncryptData(secretKey []byte) []byte {
+	encryption := NewEncryptionHandler(secretKey)
+	data := append(t.SessionKey, byte(t.Target), byte(t.Internal))
+	return encryption.EncryptData(data)
+}
+
+func NewTicket() *Ticket {
+	return &Ticket{}
+}
+
 // GenerateEncryptionKey creates an encryption key based on user ID and password
 func GenerateEncryptionKey(user int, password []byte) []byte {
 	iterations := int(65000 + user%1024)

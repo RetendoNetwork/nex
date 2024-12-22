@@ -1,8 +1,8 @@
 package nex
 
-var TypeSyn = 0x0
-var TypeConnect = 0x1
-var TypeData = 0x2
-var TypeDisconnect = 0x3
-var TypePing = 0x4
-var TypeUser = 0x5
+var TypeSyn uint16 = 0x0
+var TypeConnect uint16 = 0x1
+var TypeData uint16 = 0x2
+var TypeDisconnect uint16 = 0x3
+var TypePing uint16 = 0x4
+var TypeUser uint16 = 0x5

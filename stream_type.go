@@ -7,7 +7,7 @@ func (st StreamType) EnumIndex() uint8 {
 }
 
 const (
-	DO StreamType = iota
+	DO StreamType = iota + 1
 	RV
 	OldRVSec
 	SBMGMT
@@ -16,6 +16,6 @@ const (
 	NATEcho
 	Routing
 	Game
-	TVSecure
+	RVSecure
 	Relay
 )

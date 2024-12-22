@@ -41,19 +41,19 @@ func (s *NATCheck) detectExternalAddress(stunAddr string, stunPort int) (string,
 	serverAddr := fmt.Sprintf("%s:%d", stunAddr, stunPort)
 	remoteAddr, err := net.ResolveUDPAddr("udp", serverAddr)
 	if err != nil {
-		return "", 0, fmt.Errorf("failed to resolve STUN server: %v", err)
+		return "", 0, fmt.Errorf("failed to resolve server: %v", err)
 	}
 
 	_, err = s.conn.WriteToUDP(message, remoteAddr)
 	if err != nil {
-		return "", 0, fmt.Errorf("failed to send message to STUN server: %v", err)
+		return "", 0, fmt.Errorf("failed to send message to server: %v", err)
 	}
 
 	buf := make([]byte, 16)
 	s.conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 	n, _, err := s.conn.ReadFromUDP(buf)
 	if err != nil {
-		return "", 0, fmt.Errorf("failed to read from STUN server: %v", err)
+		return "", 0, fmt.Errorf("failed to read from server: %v", err)
 	}
 
 	if n == 16 {
@@ -67,5 +67,5 @@ func (s *NATCheck) detectExternalAddress(stunAddr string, stunPort int) (string,
 		}
 	}
 
-	return "", 0, fmt.Errorf("invalid response from STUN server")
+	return "", 0, fmt.Errorf("invalid response from server")
 }
