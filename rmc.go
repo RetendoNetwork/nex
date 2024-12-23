@@ -44,20 +44,24 @@ type RMCResponse struct {
 	errorCode uint32
 }
 
+// Returns the protocol of the response
 func (rmc *RMCResponse) CustomID() uint16 {
 	return rmc.customID
 }
 
+// Returns the protocol of the response
 func (rmc *RMCResponse) SetCustomID(customID uint16) {
 	rmc.customID = customID
 }
 
+// Returns the protocol of the response
 func (rmc *RMCResponse) SetSuccess(method uint32, data []byte) {
 	rmc.success = 1
 	rmc.method = method
 	rmc.data = data
 }
 
+// Sets the error code for the response
 func (rmc *RMCResponse) SetError(RCode uint32) {
 	if RCode&errorMask == 0 {
 		RCode = uint32(RCode | errorMask)
@@ -66,6 +70,7 @@ func (rmc *RMCResponse) SetError(RCode uint32) {
 	rmc.errorCode = RCode
 }
 
+// Creates a new RMCResponse object
 func NewRMCResponse(protocol uint8, callID uint32) RMCResponse {
 	rmc := RMCResponse{
 		protocol: protocol,

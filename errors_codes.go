@@ -23,6 +23,7 @@ var ErrorNames = map[uint32]string{
 	0x0001000C: "Core::InitializationFailure",
 }
 
+// Returns the error code from the error name
 func ErrorNameFromCode(errorCode uint32) string {
 	if name, exists := ErrorNames[errorCode]; exists {
 		return name

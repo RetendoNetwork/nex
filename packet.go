@@ -1,9 +1,12 @@
 package nex
 
 type Packet struct {
+	server   *Server
+	version  uint8
+	data     []byte
+	payload  []byte
 	request  RMCRequest
 	response RMCResponse
-	version  uint8
 }
 
 func (pkt *Packet) RMCRequest() RMCRequest {
@@ -12,4 +15,14 @@ func (pkt *Packet) RMCRequest() RMCRequest {
 
 func (pkt *Packet) RMCResponse() RMCResponse {
 	return pkt.response
+}
+
+func NewPacket(server *Server, data []byte) *Packet {
+	pkt := &Packet{
+		server:  server,
+		data:    data,
+		payload: []byte{},
+	}
+
+	return pkt
 }

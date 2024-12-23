@@ -12,6 +12,7 @@ type nexVersion struct {
 	Smv string
 }
 
+// For get the NEX version
 func (n *nexVersion) Copy() *nexVersion {
 	return &nexVersion{
 		Maj: n.Maj,
@@ -22,6 +23,7 @@ func (n *nexVersion) Copy() *nexVersion {
 	}
 }
 
+// For set the NEX version
 func NewNexVersion(maj, min, pat int) *nexVersion {
 	return &nexVersion{
 		Maj: maj,

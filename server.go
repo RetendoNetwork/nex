@@ -7,19 +7,30 @@ import (
 )
 
 type Server struct {
-	socket                *net.UDPConn
-	accessKey             string
-	prudpVersion          int
-	nexVersion            *nexVersion
-	pid                   uint32
-	keySize               int
-	fragmentSize          int
-	signatureKey          int
-	genericEventHandles   map[string][]func(PacketInterface)
-	prudpV0EventHandles   map[string][]func(*PacketV0)
-	prudpV1EventHandles   map[string][]func(*PacketV1)
-	prudpLiteEventHandles map[string][]func(*PacketLite)
-	connIncrementer       *Incrementer[int]
+	socket                      *net.UDPConn
+	accessKey                   string
+	prudpVersion                int
+	nexVersion                  *nexVersion
+	pid                         uint32
+	password                    []byte
+	ticketVersion               int
+	keySize                     int
+	fragmentSize                int
+	signatureKey                int
+	version                     *nexVersion
+	datastoreProtocolVersion    *nexVersion
+	matchMakingProtocolVersion  *nexVersion
+	rankingProtocolVersion      *nexVersion
+	ranking2ProtocolVersion     *nexVersion
+	messagingProtocolVersion    *nexVersion
+	utilityProtocolVersion      *nexVersion
+	natTraversalProtocolVersion *nexVersion
+	genericEventHandles         map[string][]func(PacketInterface)
+	prudpV0EventHandles         map[string][]func(*PacketV0)
+	prudpV1EventHandles         map[string][]func(*PacketV1)
+	prudpLiteEventHandles       map[string][]func(*PacketLite)
+	connIncrementer             *Incrementer[int]
+	connected                   bool
 }
 
 func (srv *Server) Listen(port int) {
@@ -75,6 +86,84 @@ func (srv *Server) NEXVersion() *nexVersion {
 // SetDefaultNEXVersion sets the default NEX protocol versions
 func (srv *Server) SetDefaultNEXVersion(n *nexVersion) {
 	srv.nexVersion = n
+	// See the code here https://github.com/PretendoNetwork/nex-go/blob/4885f237400082a8528743dc9499218c7d19c50c/prudp_server.go#L891
+	srv.datastoreProtocolVersion = n.Copy()
+	srv.matchMakingProtocolVersion = n.Copy()
+	srv.rankingProtocolVersion = n.Copy()
+	srv.ranking2ProtocolVersion = n.Copy()
+	srv.messagingProtocolVersion = n.Copy()
+	srv.utilityProtocolVersion = n.Copy()
+	srv.natTraversalProtocolVersion = n.Copy()
+}
+
+// DataStoreProtocolVersion returns the servers DataStore protocol version
+func (srv *Server) DataStoreProtocolVersion() *nexVersion {
+	return srv.datastoreProtocolVersion
+}
+
+// SetDataStoreProtocolVersion sets the servers DataStore protocol version
+func (srv *Server) SetDataStoreProtocolVersion(version *nexVersion) {
+	srv.datastoreProtocolVersion = version
+}
+
+// MatchMakingProtocolVersion returns the servers MatchMaking protocol version
+func (srv *Server) MatchMakingProtocolVersion() *nexVersion {
+	return srv.matchMakingProtocolVersion
+}
+
+// SetMatchMakingProtocolVersion sets the servers MatchMaking protocol version
+func (srv *Server) SetMatchMakingProtocolVersion(version *nexVersion) {
+	srv.matchMakingProtocolVersion = version
+}
+
+// RankingProtocolVersion returns the servers Ranking protocol version
+func (srv *Server) RankingProtocolVersion() *nexVersion {
+	return srv.rankingProtocolVersion
+}
+
+// SetRankingProtocolVersion sets the servers Ranking protocol version
+func (srv *Server) SetRankingProtocolVersion(version *nexVersion) {
+	srv.rankingProtocolVersion = version
+}
+
+// Ranking2ProtocolVersion returns the servers Ranking2 protocol version
+func (srv *Server) Ranking2ProtocolVersion() *nexVersion {
+	return srv.ranking2ProtocolVersion
+}
+
+// SetRanking2ProtocolVersion sets the servers Ranking2 protocol version
+func (srv *Server) SetRanking2ProtocolVersion(version *nexVersion) {
+	srv.ranking2ProtocolVersion = version
+}
+
+// MessagingProtocolVersion returns the servers Messaging protocol version
+func (srv *Server) MessagingProtocolVersion() *nexVersion {
+	return srv.messagingProtocolVersion
+}
+
+// SetMessagingProtocolVersion sets the servers Messaging protocol version
+func (srv *Server) SetMessagingProtocolVersion(version *nexVersion) {
+	srv.messagingProtocolVersion = version
+}
+
+// UtilityProtocolVersion returns the servers Utility protocol version
+func (srv *Server) UtilityProtocolVersion() *nexVersion {
+	return srv.utilityProtocolVersion
+}
+
+// SetUtilityProtocolVersion sets the servers Utility protocol version
+func (srv *Server) SetUtilityProtocolVersion(version *nexVersion) {
+	srv.utilityProtocolVersion = version
+}
+
+// SetNATTraversalProtocolVersion sets the servers NAT Traversal protocol version
+func (srv *Server) SetNATTraversalProtocolVersion(version *nexVersion) {
+	srv.natTraversalProtocolVersion = version
+}
+
+// NATTraversalProtocolVersion returns the servers NAT Traversal protocol version
+func (srv *Server) NATTraversalProtocolVersion() *nexVersion {
+	return srv.natTraversalProtocolVersion
 }
 
 // PID returns the PID
@@ -117,6 +206,18 @@ func (srv *Server) SetAccessKey(accessKey string) {
 	srv.accessKey = accessKey
 }
 
+func (srv *Server) GetPassword() []byte {
+	return srv.password
+}
+
+func (srv *Server) SetPassword(password []byte) {
+	srv.password = password
+}
+
+func (srv *Server) SetTicketVersion(ticketVersion int) {
+	srv.ticketVersion = ticketVersion
+}
+
 // GetKeySize returns the key size
 func (srv *Server) GetKeySize() int {
 	return srv.keySize
@@ -125,6 +226,10 @@ func (srv *Server) GetKeySize() int {
 // SetKeySize sets the key size
 func (srv *Server) SetKeySize(KeySize int) {
 	srv.keySize = KeySize
+}
+
+func (srv *Server) SetConnected(connected bool) {
+	srv.connected = connected
 }
 
 // ConnIncrementer returns the connection incrementer
@@ -186,6 +291,7 @@ func (srv *Server) SendRaw(conn *net.UDPAddr, data []byte) error {
 	return nil
 }
 
+// Create a new server
 func NewServer() *Server {
 	srv := &Server{
 		genericEventHandles:   make(map[string][]func(PacketInterface)),
